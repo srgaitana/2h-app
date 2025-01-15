@@ -1,0 +1,140 @@
+classDiagram
+    class Login {
+        +authenticate()
+        +validateToken()
+        +generateToken()
+        +logout()
+        +checkSession()
+        +resetPassword()
+    }
+
+    class User {
+        +updateProfile()
+        +getProfile()
+        +changePassword()
+    }
+
+    class Patient {
+        +searchProfessionals()
+        +requestAppointment()
+        +viewAppointmentHistory()
+        +cancelAppointment()
+        +makePayment()
+        +viewPaymentHistory()
+        +requestRefund()
+    }
+
+    class Professional {
+        +updateAvailability()
+        +acceptAppointment()
+        +getSchedule()
+        +updateProfile()
+        +setConsultationFee()
+        +viewEarnings()
+        +withdrawFunds()
+        +generateFinancialReport()
+    }
+
+    class Availability {
+        +addTimeSlot()
+        +removeTimeSlot()
+        +checkAvailability()
+        +getAvailableSlots()
+    }
+
+    class Appointment {
+        +schedule()
+        +cancel()
+        +reschedule()
+        +confirm()
+        +complete()
+        +calculateFees()
+        +validatePaymentStatus()
+    }
+
+    class TherapySession {
+        +createSession()
+        +updateProgress()
+        +getSessionHistory()
+        +addNotes()
+        +calculateSessionFee()
+    }
+
+    class Review {
+        +submitReview()
+        +verifyReview()
+        +calculateAverageRating()
+    }
+
+    class Billing {
+        +generateInvoice()
+        +processPayment()
+        +getPaymentHistory()
+        +refundPayment()
+        +validatePayment()
+        +calculateTaxes()
+        +generateReceipt()
+        +processRefund()
+        +handleFailedPayment()
+        +sendPaymentReminder()
+    }
+
+    class Payment {
+        +int paymentID
+        +int billingID
+        +decimal amount
+        +enum paymentMethod
+        +string transactionID
+        +enum status
+        +initiatePayment()
+        +validatePaymentDetails()
+        +processTransaction()
+        +confirmPayment()
+        +generateReceipt()
+        +handleRefund()
+        +recordTransaction()
+        +notifyParties()
+    }
+
+    %% Flujo de autenticación
+    Login ..> User : authenticate() -> getProfile()
+    Login ..> User : resetPassword() -> changePassword()
+
+    %% Flujo de búsqueda y agenda
+    Patient ..> Professional : searchProfessionals() -> getSchedule()
+    Professional ..> Availability : updateAvailability() -> addTimeSlot()
+    Patient ..> Availability : requestAppointment() -> checkAvailability()
+    
+    %% Flujo de citas
+    Availability ..> Appointment : getAvailableSlots() -> schedule()
+    Patient ..> Appointment : requestAppointment() -> schedule()
+    Professional ..> Appointment : acceptAppointment() -> confirm()
+    
+    %% Flujo de terapia
+    Appointment ..> TherapySession : complete() -> createSession()
+    TherapySession ..> Professional : updateProgress() -> getSchedule()
+    TherapySession ..> Billing : calculateSessionFee() -> generateInvoice()
+    
+    %% Flujo de facturación y pagos
+    Appointment ..> Billing : complete() -> generateInvoice()
+    Billing ..> Payment : processPayment() -> initiatePayment()
+    Payment ..> Billing : confirmPayment() -> generateReceipt()
+    Patient ..> Payment : makePayment() -> processTransaction()
+    Payment ..> Professional : confirmPayment() -> viewEarnings()
+    
+    %% Flujo de reembolsos
+    Patient ..> Billing : requestRefund() -> processRefund()
+    Billing ..> Payment : processRefund() -> handleRefund()
+    Payment ..> Professional : handleRefund() -> generateFinancialReport()
+    
+    %% Flujo de reviews
+    Appointment ..> Review : complete() -> submitReview()
+    Review ..> Professional : calculateAverageRating() -> updateProfile()
+
+    %% Relaciones de herencia
+    User <|-- Patient : extends
+    User <|-- Professional : extends
+
+note for Payment "Gestiona transacciones"
+note for Billing "Gestiona facturación"
+note for Professional "Gestiona ingresos"

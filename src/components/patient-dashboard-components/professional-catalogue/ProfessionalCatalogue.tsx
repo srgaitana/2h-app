@@ -1,19 +1,17 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import { Search, Calendar, Star, DollarSign } from 'lucide-react'
 import { format, parseISO, isSameDay, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { createPortal } from 'react-dom'
 
 interface Professional {
-  ProfessionalID: number;
-  SpecialtyID: number;
-  Experience: string;
-  LicenseNumber: string;
-  Education: string;
-  ConsultationFee: number;
-  ProfessionalStatus: string;
-  SpecialtyName: string;
+  ProfessionalID: number
+  FullName: string
+  SpecialtyName: string
+  ConsultationFee: number
+  Status: string
 }
 
 interface Availability {
@@ -29,106 +27,8 @@ interface TimeBlock {
   id: number
 }
 
-// Datos de ejemplo de profesionales
-const professionals: Professional[] = [
-  {
-    ProfessionalID: 1,
-    SpecialtyID: 1,
-    Experience: "10 años",
-    LicenseNumber: "MED12345",
-    Education: "Universidad de Medicina de Madrid",
-    ConsultationFee: 150,
-    ProfessionalStatus: "Activo",
-    SpecialtyName: "Cardiología"
-  },
-  {
-    ProfessionalID: 2,
-    SpecialtyID: 2,
-    Experience: "8 años",
-    LicenseNumber: "MED67890",
-    Education: "Universidad de Barcelona",
-    ConsultationFee: 130,
-    ProfessionalStatus: "Activo",
-    SpecialtyName: "Dermatología"
-  },
-  {
-    ProfessionalID: 3,
-    SpecialtyID: 3,
-    Experience: "12 años",
-    LicenseNumber: "MED24680",
-    Education: "Universidad de Valencia",
-    ConsultationFee: 120,
-    ProfessionalStatus: "Activo",
-    SpecialtyName: "Pediatría"
-  }
-]
-
-async function fetchAvailability(professionalId: number): Promise<Availability[]> {
-  // Simular una llamada a la API
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  // Datos de ejemplo
-  return [
-    {
-      "AvailabilityID": 116,
-      "AvailabilityDate": "2025-01-15T05:00:00.000Z",
-      "StartTime": "07:00:00",
-      "EndTime": "07:30:00"
-    },
-    {
-      "AvailabilityID": 117,
-      "AvailabilityDate": "2025-01-15T05:00:00.000Z",
-      "StartTime": "07:30:00",
-      "EndTime": "08:00:00"
-    },
-    {
-      "AvailabilityID": 118,
-      "AvailabilityDate": "2025-01-15T05:00:00.000Z",
-      "StartTime": "08:00:00",
-      "EndTime": "08:30:00"
-    },
-    {
-      "AvailabilityID": 119,
-      "AvailabilityDate": "2025-01-16T05:00:00.000Z",
-      "StartTime": "09:00:00",
-      "EndTime": "09:30:00"
-    },
-    {
-      "AvailabilityID": 120,
-      "AvailabilityDate": "2025-01-16T05:00:00.000Z",
-      "StartTime": "09:30:00",
-      "EndTime": "10:00:00"
-    }
-  ]
-}
-
-function ProfessionalCard({ professional, onShowAvailability }: { professional: Professional, onShowAvailability: () => void }) {
-  return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105">
-      <div className="bg-blue-600 p-4">
-        <h2 className="text-xl font-semibold text-white">Dr. {professional.ProfessionalID}</h2>
-      </div>
-      <div className="p-4">
-        <p className="text-blue-800 font-medium mb-2">{professional.SpecialtyName}</p>
-        <p className="text-gray-600 mb-1">Experiencia: {professional.Experience}</p>
-        <p className="text-gray-600 mb-1">Educación: {professional.Education}</p>
-        <p className="text-gray-600 mb-4">Precio: ${professional.ConsultationFee}</p>
-        <div className="flex justify-between">
-          <button
-            onClick={onShowAvailability}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
-          >
-            Ver disponibilidad
-          </button>
-          <button
-            className="border border-blue-500 text-blue-500 hover:bg-blue-50 font-bold py-2 px-4 rounded transition duration-300"
-          >
-            Solicitar cita
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+interface ProfessionalCatalogProps {
+  isProfessional: boolean
 }
 
 function AvailabilityCalendar({ availability, onClose, onDateSelect, selectedDate }: { availability: Availability[], onClose: () => void, onDateSelect: (date: Date | null) => void, selectedDate: Date | null }) {
@@ -140,25 +40,22 @@ function AvailabilityCalendar({ availability, onClose, onDateSelect, selectedDat
     onDateSelect(date)
   }
 
-  const renderHeader = () => {
-    return (
-      <div className="flex justify-between items-center mb-4">
-        <button onClick={() => setCurrentMonth(addDays(currentMonth, -30))} className="text-blue-600 hover:text-blue-800">&lt;</button>
-        <h2 className="text-xl font-bold text-blue-800">{format(currentMonth, 'MMMM yyyy', { locale: es })}</h2>
-        <button onClick={() => setCurrentMonth(addDays(currentMonth, 30))} className="text-blue-600 hover:text-blue-800">&gt;</button>
-      </div>
-    )
-  }
+  const renderHeader = () => (
+    <div className="flex justify-between items-center mb-4">
+      <button onClick={() => setCurrentMonth(addDays(currentMonth, -30))} className="text-blue-600 hover:text-blue-800">&lt;</button>
+      <h2 className="text-xl font-bold text-blue-800">{format(currentMonth, 'MMMM yyyy', { locale: es })}</h2>
+      <button onClick={() => setCurrentMonth(addDays(currentMonth, 30))} className="text-blue-600 hover:text-blue-800">&gt;</button>
+    </div>
+  )
 
   const renderDays = () => {
-    const dateFormat = 'EEEEEE'
     const days = []
     let startDate = startOfWeek(currentMonth)
 
     for (let i = 0; i < 7; i++) {
       days.push(
         <div key={i} className="text-center font-bold text-blue-600">
-          {format(addDays(startDate, i), dateFormat, { locale: es })}
+          {format(addDays(startDate, i), 'EEEEEE', { locale: es })}
         </div>
       )
     }
@@ -172,16 +69,12 @@ function AvailabilityCalendar({ availability, onClose, onDateSelect, selectedDat
     const startDate = startOfWeek(monthStart)
     const endDate = endOfWeek(monthEnd)
 
-    const dateFormat = 'd'
     const rows = []
-
     let days = []
     let day = startDate
-    let formattedDate = ''
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
-        formattedDate = format(day, dateFormat)
         const cloneDay = day
         const isAvailable = availability.some(a => isSameDay(parseISO(a.AvailabilityDate), cloneDay))
         days.push(
@@ -196,7 +89,7 @@ function AvailabilityCalendar({ availability, onClose, onDateSelect, selectedDat
             } ${isAvailable ? 'bg-blue-100 hover:bg-blue-200' : ''}`}
             onClick={() => isAvailable && handleDateSelect(cloneDay)}
           >
-            {formattedDate}
+            {format(day, 'd')}
           </div>
         )
         day = addDays(day, 1)
@@ -269,10 +162,49 @@ function AvailabilityCalendar({ availability, onClose, onDateSelect, selectedDat
   )
 }
 
-export default function MedicalAppointments() {
+async function fetchAvailability(professionalId: number): Promise<Availability[]> {
+  try {
+    const response = await fetch(`/api/availability?professionalId=${professionalId}`)
+    if (!response.ok) throw new Error("Error al obtener la disponibilidad")
+    const result = await response.json()
+    return Array.isArray(result.data) ? result.data : []
+  } catch (error) {
+    console.error("Error al obtener disponibilidad:", error)
+    return []
+  }
+}
+
+export default function ProfessionalCatalog({ isProfessional }: ProfessionalCatalogProps) {
+  const [professionals, setProfessionals] = useState<Professional[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedProfessional, setSelectedProfessional] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [availability, setAvailability] = useState<Availability[]>([])
+
+  useEffect(() => {
+    const fetchProfessionals = async () => {
+      try {
+        const response = await fetch('/api/professionals')
+        if (!response.ok) {
+          throw new Error('Failed to fetch professionals')
+        }
+        const data = await response.json()
+        if (data.success) {
+          setProfessionals(data.data)
+        } else {
+          throw new Error(data.message || 'Unknown error occurred')
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProfessionals()
+  }, [])
 
   useEffect(() => {
     if (selectedProfessional !== null) {
@@ -280,32 +212,92 @@ export default function MedicalAppointments() {
     }
   }, [selectedProfessional])
 
-  const handleDateSelect = (date: Date | null) => {
-    setSelectedDate(date)
+  const filteredProfessionals = professionals.filter(pro => 
+    pro.FullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    pro.SpecialtyName.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const themeColor = isProfessional ? 'green' : 'blue'
+
+  if (isLoading) {
+    return <div className="text-center py-4">
+      <div className={`animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 ${themeColor === 'green' ? 'border-green-500' : 'border-blue-500'} mx-auto`}></div>
+      <p className="mt-2 text-sm text-gray-600">Cargando profesionales...</p>
+    </div>
+  }
+
+  if (error) {
+    return <div className="text-center py-4 text-red-500">{error}</div>
   }
 
   return (
-    <main className="min-h-screen bg-blue-50">
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6 text-blue-800">Profesionales Médicos Disponibles</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {professionals.map((professional) => (
-            <ProfessionalCard
-              key={professional.ProfessionalID}
-              professional={professional}
-              onShowAvailability={() => setSelectedProfessional(professional.ProfessionalID)}
-            />
-          ))}
-        </div>
-        {selectedProfessional !== null && (
-          <AvailabilityCalendar
-            availability={availability}
-            onClose={() => setSelectedProfessional(null)}
-            onDateSelect={handleDateSelect}
-            selectedDate={selectedDate}
-          />
-        )}
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h2 className={`text-xl font-bold mb-4 ${isProfessional ? 'text-green-600' : 'text-blue-600'}`}>
+        {isProfessional ? 'Profesionales similares' : 'Profesionales disponibles'}
+      </h2>
+      <div className="mb-4 relative">
+        <input
+          type="text"
+          placeholder="Buscar por nombre o especialidad"
+          className={`w-full p-2 pr-8 text-sm text-gray-900 border rounded-md focus:outline-none focus:ring-1 transition-all duration-300 ease-in-out ${
+            themeColor === 'green' ? 'focus:ring-green-500' : 'focus:ring-blue-500'
+          }`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Search className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 ${themeColor === 'green' ? 'text-green-500' : 'text-blue-500'}`} />
       </div>
-    </main>
+      <div className="space-y-4 max-h-96 overflow-y-auto">
+        {filteredProfessionals.map((pro) => (
+          <div key={pro.ProfessionalID} className={`p-3 rounded-md shadow-sm border-l-4 ${themeColor === 'green' ? 'border-green-500' : 'border-blue-500'}`}>
+            <h3 className="font-semibold">{pro.FullName}</h3>
+            {pro.SpecialtyName && (
+              <p className="text-sm text-gray-600">
+                {pro.SpecialtyName} • {Math.floor(Math.random() * 20) + 1} años de experiencia
+              </p>
+            )}
+            <div className="flex justify-between items-center mt-2 text-sm">
+              <span className="flex items-center">
+                <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                {(Math.random() * (5 - 4) + 4).toFixed(1)}
+              </span>
+              <span className="flex items-center">
+                <DollarSign className="w-4 h-4 text-gray-500 mr-1" />
+                {pro.ConsultationFee?.toLocaleString() ?? "200.000"}
+              </span>
+              <span className={`px-2 py-1 rounded-full text-xs ${
+                pro.Status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {pro.Status === 'Available' ? 'Disponible' : 'No disponible'}
+              </span>
+            </div>
+            {!isProfessional && (
+              <button 
+                onClick={() => setSelectedProfessional(pro.ProfessionalID)}
+                className={`mt-2 w-full py-1 px-2 rounded text-white text-sm font-medium transition-colors duration-300 ${
+                  themeColor === 'green' ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'
+                }`}
+              >
+                Agendar cita
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {filteredProfessionals.length === 0 && (
+        <p className="text-center text-gray-500 mt-4">No se encontraron profesionales que coincidan con tu búsqueda.</p>
+      )}
+      {selectedProfessional !== null && (
+        <AvailabilityCalendar
+          availability={availability}
+          onClose={() => {
+            setSelectedProfessional(null)
+            setSelectedDate(null)
+          }}
+          onDateSelect={setSelectedDate}
+          selectedDate={selectedDate}
+        />
+      )}
+    </div>
   )
 }

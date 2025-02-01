@@ -172,7 +172,6 @@ export const useCalendar = (
         StartTime: avail.StartTime,
         EndTime: avail.EndTime
       }));
-
       const response = await fetch('/api/professionals/availability', {
         method: 'POST',
         headers: {
@@ -184,13 +183,12 @@ export const useCalendar = (
       if (!response.ok) {
         throw new Error('Failed to confirm availabilities');
       }
-
+      
       const result = await response.json();
       alert('Availabilities confirmed successfully');
       console.log('Availabilities confirmed:', result);
     } catch (error) {
       console.error('Error confirming availabilities:', error);
-      setError('Failed to confirm availabilities');
     }
   };
 
@@ -205,6 +203,7 @@ export const useCalendar = (
   const generateSummary = () => {
     const summary = availabilities.reduce((acc, curr) => {
       const date = new Date(curr.AvailabilityDate);
+      console.log("la fecha de hoy es: ", date);
       const dateString = date.toISOString().split('T')[0];
 
       if (!acc[dateString]) {

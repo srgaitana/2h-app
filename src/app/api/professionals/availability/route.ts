@@ -43,7 +43,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Validación de fecha no pasada
-    const currentDate = new Date();
+    const currentDate = new Date(new Date().toISOString().split('T')[0]);
+    
 
     // Crear un array para almacenar las disponibilidades a agregar
     const valuesToInsert = [];
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
 
       // Validar si la fecha es en el futuro
       if (availabilityDate < currentDate) {
+        console.log(`No se puede agregar disponibilidad en fechas pasadas. (${AvailabilityDate} - ${currentDate})`);
         return NextResponse.json({ error: `No se puede agregar disponibilidad en fechas pasadas. (${AvailabilityDate})` }, { status: 400 });
       }
 

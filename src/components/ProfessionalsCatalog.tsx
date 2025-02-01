@@ -1,7 +1,9 @@
+// ProfessionalCatalog.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, DollarSign } from 'lucide-react'
+import { Search, DollarSign, Calendar, User } from 'lucide-react'
+import ProfessionalCataloguePopUp from './ProfessionalCataloguePopUp'
 
 interface Professional {
   ProfessionalID: number
@@ -18,9 +20,10 @@ interface ProfessionalCatalogProps {
 export default function ProfessionalCatalog({ isProfessional }: ProfessionalCatalogProps) {
   const [professionals, setProfessionals] = useState<Professional[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [isFocused, setIsFocused] = useState(false) // Estado para controlar el enfoque
+  const [isFocused, setIsFocused] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   useEffect(() => {
     const fetchProfessionals = async () => {
@@ -45,7 +48,6 @@ export default function ProfessionalCatalog({ isProfessional }: ProfessionalCata
     fetchProfessionals()
   }, [])
 
-  // Filtrar profesionales según el término de búsqueda
   const filteredProfessionals = professionals.filter(pro => 
     pro.FullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (pro.SpecialtyName?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
@@ -67,25 +69,26 @@ export default function ProfessionalCatalog({ isProfessional }: ProfessionalCata
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <h2 className={`text-xl font-bold mb-4 ${isProfessional ? 'text-green-600' : 'text-blue-600'}`}>
-        {isProfessional ? 'Profesionales similares' : 'Profesionales disponibles'}
-      </h2>
-      <div className="mb-4 relative">
-        <input
-          type="text"
-          placeholder="Buscar por nombre o especialidad"
-          className={`w-full p-2 pr-8 text-sm text-gray-900 border rounded-md focus:outline-none focus:ring-1 transition-all duration-300 ease-in-out ${
-            themeColor === 'green' ? 'focus:ring-green-500' : 'focus:ring-blue-500'
-          }`}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-        />
-        <Search className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 ${themeColor === 'green' ? 'text-green-500' : 'text-blue-500'}`} />
-      </div>
-      {(isFocused || searchTerm) && ( // Mostrar las tarjetas solo si hay foco o texto
+    <>
+      <div className="bg-white rounded-lg shadow-md p-4">
+        <h2 className={`text-xl font-bold mb-4 ${isProfessional ? 'text-green-600' : 'text-blue-600'}`}>
+          {isProfessional ? 'Profesionales similares' : 'Profesionales disponibles'}
+        </h2>
+        <div className="mb-4 relative">
+          <input
+            type="text"
+            placeholder="Buscar por nombre o especialidad"
+            className={`w-full p-2 pr-8 text-sm text-gray-900 border rounded-md focus:outline-none focus:ring-1 transition-all duration-300 ease-in-out ${
+              themeColor === 'green' ? 'focus:ring-green-500' : 'focus:ring-blue-500'
+            }`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+          />
+          <Search className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 ${themeColor === 'green' ? 'text-green-500' : 'text-blue-500'}`} />
+        </div>
+        
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {filteredProfessionals.map((pro) => (
             <div key={pro.ProfessionalID} className={`p-3 rounded-md shadow-sm border-l-4 ${themeColor === 'green' ? 'border-green-500' : 'border-blue-500'}`}>
@@ -98,13 +101,38 @@ export default function ProfessionalCatalog({ isProfessional }: ProfessionalCata
                   <DollarSign className="w-4 h-4 text-gray-500 mr-1" />
                   {pro.ConsultationFee ?? "200.000"}
                 </span>
-                {pro.Status && (
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    pro.Status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {pro.Status === 'Available' ? 'Disponible' : 'No disponible'}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {pro.Status && (
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      pro.Status === 'Available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {pro.Status === 'Available' ? 'Disponible' : 'No disponible'}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    disabled={pro.Status !== 'Available'}
+                    className={`inline-flex items-center gap-1 px-3 py-1 text-sm border rounded-md transition-colors
+                      ${pro.Status !== 'Available' 
+                        ? 'opacity-50 cursor-not-allowed border-gray-300 text-gray-500' 
+                        : themeColor === 'green'
+                          ? 'bg-green-50 border-green-500 text-green-600 hover:bg-green-100'
+                          : 'bg-blue-50 border-blue-500 text-blue-600 hover:bg-blue-100'
+                      }`}
+                  >
+                    {themeColor === 'green' ? (
+                      <>
+                        <User className="w-4 h-4" />
+                        Ver perfil
+                      </>
+                    ) : (
+                      <>
+                        <Calendar className="w-4 h-4" />
+                        Agendar
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -112,7 +140,13 @@ export default function ProfessionalCatalog({ isProfessional }: ProfessionalCata
             <p className="text-center text-gray-500 mt-4">No se encontraron profesionales que coincidan con tu búsqueda.</p>
           )}
         </div>
-      )}
-    </div>
+      </div>
+
+      <ProfessionalCataloguePopUp
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        themeColor={themeColor}
+      />
+    </>
   )
 }

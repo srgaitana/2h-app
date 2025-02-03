@@ -4,6 +4,7 @@ import ProfessionalSummary from './ProfessionalSummary';
 import QuickActions from './QuickActions';
 import Billing from './Billing';
 import Reviews from './Reviews';
+import DoctorProfile from '../profile/DoctorProfile';
 
 // Interface para los datos del usuario
 export interface User {

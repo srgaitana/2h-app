@@ -15,6 +15,8 @@ import {
 } from "date-fns"
 import { es } from "date-fns/locale"
 import { createPortal } from "react-dom"
+import { useRouter } from "next/navigation"
+
 
 interface Professional {
   ProfessionalID: number
@@ -52,6 +54,7 @@ function AvailabilityCalendar({
   onDateSelect: (date: Date | null) => void
   selectedDate: Date | null
 }) {
+  const router = useRouter()
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedTimeBlock, setSelectedTimeBlock] = useState<TimeBlock | null>(null)
 
@@ -139,6 +142,7 @@ function AvailabilityCalendar({
   }
 
   return createPortal(
+    
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
         <h2 className="text-2xl font-bold mb-4 text-blue-800">Seleccionar fecha y hora</h2>
@@ -165,14 +169,15 @@ function AvailabilityCalendar({
             </div>
           </div>
         )}
-        {selectedTimeBlock && (
+        {selectedTimeBlock && (          
           <button
             className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
             onClick={() => {
               console.log(
-                `Cita confirmada: ${format(selectedDate!, "dd/MM/yyyy")} de ${selectedTimeBlock.start} a ${selectedTimeBlock.end}`,
-              )
-              onClose()
+                `Cita confirmada: ${format(selectedDate!, "dd/MM/yyyy")} de ${selectedTimeBlock.start} a ${selectedTimeBlock.end}`
+              );
+              onClose();
+              router.push('/patient/pre-appointment');
             }}
           >
             Confirmar cita: {selectedDate && format(selectedDate, "dd/MM/yyyy")} de {selectedTimeBlock.start} a{" "}

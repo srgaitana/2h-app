@@ -51,10 +51,10 @@ export async function POST(req: NextRequest) {
 
     // Verificar cada disponibilidad
     for (const { ProfessionalID, AvailabilityDate, StartTime, EndTime } of body) {
-      const availabilityDate = new Date(AvailabilityDate); // Convertir el valor de la fecha a Date
+      const availabilityDate = new Date(AvailabilityDate).toISOString().split('T')[0];
 
       // Validar si la fecha es en el futuro
-      if (availabilityDate < currentDate) {
+      if (new Date(availabilityDate) < currentDate) {
         console.log(`No se puede agregar disponibilidad en fechas pasadas. (${AvailabilityDate} - ${currentDate})`);
         return NextResponse.json({ error: `No se puede agregar disponibilidad en fechas pasadas. (${AvailabilityDate})` }, { status: 400 });
       }

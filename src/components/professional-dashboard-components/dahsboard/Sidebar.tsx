@@ -15,8 +15,7 @@ const menuItems = [
   { id: 'records', icon: FileText, label: 'Registros Médicos', path: '/professional/records' },
   { id: 'billing', icon: DollarSign, label: 'Facturación', path: '/professional/billing' },
   { id: 'notifications', icon: Bell, label: 'Notificaciones', path: '/professional/notifications' },
-  { id: 'settings', icon: Settings, label: 'Configuración', path: '/professional/settings' },
-  { id: 'profile', icon: User, label: 'Perfil', path: '/profile' },
+  { id: 'profile', icon: User, label: 'Perfil', path: '/professional/profile' },
 ]
 
 export default function Sidebar({ menuOpen, setMenuOpen }: SidebarProps) {

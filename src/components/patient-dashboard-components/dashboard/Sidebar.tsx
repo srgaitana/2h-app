@@ -16,7 +16,6 @@ const menuItems = [
   { id: 'professionals', icon: User, label: 'Profesionales', href: '/patient/professionals' },
   { id: 'appointments', icon: Clock, label: 'Mis Citas', href: '/patient/appointments' },
   { id: 'messages', icon: MessageSquare, label: 'Mensajes', href: '/patient/messages' },
-  { id: 'billing', icon: CreditCard, label: 'Facturación', href: '/patient/billing' },
   { id: 'notifications', icon: Bell, label: 'Notificaciones', href: '/patient/notifications' },
   { id: 'settings', icon: Settings, label: 'Configuración', href: '/patient/settings' },
   { id: 'profile', icon: User, label: 'Perfil', href: '/patient/profile' },

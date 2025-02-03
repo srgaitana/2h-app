@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import Dashboard, { User } from '@/components/patient-dashboard-components/dashboard/Dashboard'
 import Layout from '@/components/patient-dashboard-components/dashboard/Layout'
 import ProfessionalCatalogue from '@/components/patient-dashboard-components/professional-catalogue/ProfessionalCatalogue'
+import PreAppointment from '@/components/patient-dashboard-components/dashboard/PreAppointment'
 
 
 export default function DashboardPage() {
@@ -52,7 +53,7 @@ export default function DashboardPage() {
   return (
     <Layout>
       <div className="mt-8">
-        <ProfessionalCatalogue isProfessional={false} />
+        <PreAppointment />
       </div>
     </Layout>
   )

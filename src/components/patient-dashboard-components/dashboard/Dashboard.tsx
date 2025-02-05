@@ -1,7 +1,7 @@
 import React from 'react'
-import Appointments from './Appointments'
-import HealthSummary from './HealthSummary'
-import QuickActions from './QuickActions'
+import Appointments from './dash-components/Appointments'
+import HealthSummary from './dash-components/HealthSummary'
+import QuickActions from './dash-components/QuickActions'
 import ProfessionalCatalog from './ProfessionalCatalog'
 
 export interface User {

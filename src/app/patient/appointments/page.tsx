@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode'
 import { redirect } from 'next/navigation'
 import { User } from '@/components/patient-dashboard-components/dashboard/Dashboard'
 import Layout from '@/components/patient-dashboard-components/dashboard/Layout'
-import ProfessionalCatalogue from '@/components/patient-dashboard-components/professional-catalogue/ProfessionalCatalogue'
+import Appointments from '@/components/patient-dashboard-components/dashboard/Appointments'
 
 
 export default function DashboardPage() {
@@ -52,7 +52,7 @@ export default function DashboardPage() {
   return (
     <Layout>
       <div className="mt-8">
-        <ProfessionalCatalogue isProfessional={false} />
+        <Appointments />
       </div>
     </Layout>
   )
